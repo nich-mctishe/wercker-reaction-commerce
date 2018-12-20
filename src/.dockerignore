@@ -1,0 +1,13 @@
+.meteor/local
+.build
+.build.*
+.npm
+.git
+.build.log
+Dockerfile
+Dockerfile-devserver
+.reaction/docker/reaction.*
+docs
+node_modules
+packages/*/.npm
+packages/*/lib/bower

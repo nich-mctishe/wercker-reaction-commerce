@@ -1,0 +1,29 @@
+box:
+  id: node
+  tag: 8.6.0
+  ports:
+    - '3000'
+
+
+services:
+  - id: mongo
+    tag: 3.6.3
+    ports:
+     - '27017'
+  - id: postgres
+    tag: 10.3
+    env:
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: hydra
+    ports:
+     - '5432'
+
+dev:
+  # maybe build network
+
+  # yarn install stuff
+
+build:
+  # will need to npm install production, then do a meteor build to the env.
+  # check https://guide.meteor.com/deployment.html#custom-deployment

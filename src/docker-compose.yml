@@ -1,0 +1,52 @@
+# This docker-compose file is used to run the reaction app in docker for development
+# The local files are mounted into the created container.
+# Usage: docker-compose up [-d]
+
+version: '3.4'
+
+networks:
+  api:
+    external:
+      name: api.reaction.localhost
+  auth:
+    external:
+      name: auth.reaction.localhost
+
+services:
+
+  reaction:
+    build:
+      context: .
+      target: meteor-dev
+    command: bash -c "meteor npm install && node ./.reaction/waitForMongo.js && reaction"
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: "mongodb://mongo:27017/reaction"
+      MONGO_OPLOG_URL: "mongodb://mongo:27017/local"
+      ROOT_URL: "http://localhost:3000"
+      HYDRA_ADMIN_URL: "http://hydra:4445"
+      HYDRA_TOKEN_URL: "http://hydra:4444/oauth2/token"
+      HYDRA_OAUTH2_INTROSPECT_URL: "http://hydra:4445/oauth2/introspect"
+      OAUTH2_CLIENT_DOMAINS: "http://localhost:4000"
+    networks:
+      default:
+      api:
+      auth:
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/opt/reaction/src
+      - reaction_node_modules:/opt/reaction/src/node_modules # do not link node_modules in, and persist it between dc up runs
+
+  mongo:
+    image: mongo:3.6.3
+    command: mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-db:/data/db
+
+volumes:
+  mongo-db:
+  reaction_node_modules:
