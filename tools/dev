@@ -1,0 +1,26 @@
+#!/bin/bash
+
+source tools/_colours
+
+MACHINE_IP="$(docker-machine ip $DOCKER_MACHINE_NAME)"
+MACHINE_URL="http://localhost"
+
+# may need to handle network set up here too
+
+echo ""
+echo -e "setting up pre network"
+echo -e "============================"
+echo ""
+
+tools/hydra
+
+echo ""
+echo -e "Setting up local development"
+echo -e "============================"
+echo -e "${BGreen}Web${Color_Off}             $MACHINE_URL:80"
+echo ""
+
+export X_TERMINAL_COLUMNS=$(tput cols)
+export X_TERMINAL_ROWS=$(tput lines)
+
+wercker dev --expose-ports "$@"

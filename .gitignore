@@ -22,3 +22,6 @@
 */pids
 */results
 */allure-results
+
+.hydra
+.wercker

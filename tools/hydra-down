@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+#sample hydra spin down and clean up script to be run on SIGINT
+if [ -d ".hydra" ]; then
+  # Control will enter here if $DIRECTORY exists.
+
+  cd .hydra
+
+  docker-compose down
+fi

@@ -8,21 +8,57 @@ box:
 services:
   - id: mongo
     tag: 3.6.3
+    cmd: mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger
     ports:
      - '27017'
-  - id: postgres
-    tag: 10.3
-    env:
-      POSTGRES_USER: hydra
-      POSTGRES_PASSWORD: changeme
-      POSTGRES_DB: hydra
-    ports:
-     - '5432'
 
 dev:
-  # maybe build network
-
-  # yarn install stuff
+  steps:
+    - script:
+      name: check local environment
+      code: |
+        [[ -f ENVIRONMENT_LOCAL || "$(cat ENVIRONMENT_LOCAL.template | xargs)" == "" ]] || ( echo "No ENVIRONMENT_LOCAL present, please create one based on ENVIRONMENT_LOCAL.template" && exit 1 )
+      cwd: $WERCKER_ROOT
+    - script:
+        name: adding tools
+        code: |
+          ln -s "$WERCKER_ROOT/tools/log" /usr/bin/log
+          ln -s "$WERCKER_ROOT/tools/reload" /usr/bin/reload
+          ln -s "$WERCKER_ROOT/tools/reload" /usr/bin/restart
+    - script:
+      name: set yarn cache
+      code: export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
+    - script:
+      name: install dependencies
+      code: HOME=$YARN_CACHE yarn
+    - script:
+      name: add global meteor
+      code: curl https://install.meteor.com/ | sh
+    - script:
+      name: add global reaction
+      code: npm install -g reaction-cli
+    - script:
+      name: apply mongo url
+      code: |
+        if [[ -z "${MONGO_URL}" ]]; then
+          export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
+        fi
+    - script:
+      name: meteor-dev
+      code: |
+        touch /var/log/setup.log
+        bash -c "meteor npm install && node .reaction/waitForMongo.js && reaction 2>&1 &"
+      cwd: $WERCKER_ROOT/src
+    - script:
+        name: run
+        code: |
+          touch /var/log/reaction.log
+          # npm run devserver >> /var/log/reaction.log 2>&1 &
+    - internal/shell:
+      code: |
+        stty columns $TERMINAL_COLUMNS
+        stty rows $TERMINAL_ROWS
+        log
 
 build:
   # will need to npm install production, then do a meteor build to the env.

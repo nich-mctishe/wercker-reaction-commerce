@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+# need to run docker in this instance after an install
+
+# git install reaction hydra (https used in case of no ssh key)
+if [ ! -d ".hydra" ]; then
+  git clone https://github.com/reactioncommerce/reaction-hydra.git .hydra
+fi
+
+cd .hydra
+
+docker-compose up -d
+
+#TODO: work out how to spin container down at end.
+# could use --abort-on-container-exit
+# use -d to ensure bg mode
