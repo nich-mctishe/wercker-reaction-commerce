@@ -25,6 +25,7 @@
 
 .hydra
 .wercker
-tools/meteor
+data
 
+tools/meteor
 .v8flags-*.json
