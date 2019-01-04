@@ -3,6 +3,7 @@ box:
   tag: 8.6.0
   ports:
     - '3000'
+    - '3030'
 
 
 services:
@@ -33,7 +34,12 @@ dev:
       code: HOME=$YARN_CACHE yarn
     - script:
       name: add global meteor
-      code: curl https://install.meteor.com/ | sh
+      code: |
+        if [ ! -d ".meteor" ]; then
+          curl https://install.meteor.com/ > tools/meteor | sh
+        else
+          tools/meteor
+        fi
     - script:
       name: add global reaction
       code: npm install -g reaction-cli
@@ -53,7 +59,8 @@ dev:
         name: run
         code: |
           touch /var/log/reaction.log
-          # npm run devserver >> /var/log/reaction.log 2>&1 &
+          npm run devserver >> /var/log/reaction.log 2>&1 &
+        cwd: $WERCKER_ROOT/src
     - internal/shell:
       code: |
         stty columns $TERMINAL_COLUMNS
