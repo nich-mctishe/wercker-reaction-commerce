@@ -35,11 +35,15 @@ dev:
     - script:
       name: add global meteor
       code: |
-        if [ ! -d ".meteor" ]; then
+        if [ ! -f "$WERCKER_ROOT/tools/meteor" ]; then
           curl https://install.meteor.com/ > tools/meteor | sh
+          chmod +x $WERCKER_ROOT/tools/meteor
         else
-          tools/meteor
+          $WERCKER_ROOT/tools/meteor
         fi
+
+        # may need to ensure meteor becomes global
+        # ln -s "$WERCKER_ROOT/tools/meteor" /usr/bin/meteor
     - script:
       name: add global reaction
       code: npm install -g reaction-cli
@@ -50,17 +54,13 @@ dev:
           export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
         fi
     - script:
-      name: meteor-dev
+      name: meteor dev starting, please ready yourself for a short wait (15 mins)
       code: |
-        touch /var/log/setup.log
-        bash -c "meteor npm install && node .reaction/waitForMongo.js && reaction 2>&1 &"
+        touch /var/log/reaction.log
+        meteor npm install
+        node .reaction/waitForMongo.js
+        reaction >> /var/log/reaction.log 2>&1 &
       cwd: $WERCKER_ROOT/src
-    - script:
-        name: run
-        code: |
-          touch /var/log/reaction.log
-          npm run devserver >> /var/log/reaction.log 2>&1 &
-        cwd: $WERCKER_ROOT/src
     - internal/shell:
       code: |
         stty columns $TERMINAL_COLUMNS

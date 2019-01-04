@@ -4,4 +4,4 @@ clear
 
 echo "Viewing application log, hit ctrl+c to end and return to the command line"
 
-tail -f -s 0.1 /var/log/setup.log /var/log/reaction.log
+tail -f -s 0.1 /var/log/reaction.log
