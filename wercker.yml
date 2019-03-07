@@ -1,6 +1,6 @@
 box:
-  id: node
-  tag: 8.6.0
+  id: nichheadlong/reaction-wercker
+  tag: 0.0.1
   ports:
     - '3000'
     - '3030'
@@ -33,17 +33,23 @@ dev:
     - script:
       name: install dependencies
       code: HOME=$YARN_CACHE yarn
+    # - script:
+    #   name: add global meteor
+    #   code: |
+    #     ls -lah $WERCKER_ROOT/tools/meteor
+    #     if [ ! -f "$WERCKER_ROOT/tools/meteor" ]; then
+    #       curl https://install.meteor.com/ > $WERCKER_ROOT/tools/meteor | sh
+    #       chmod +x $WERCKER_ROOT/tools/meteor
+    #     fi
+    # - script:
+    #   name: add global reaction
+    #   code: npm install -g reaction-cli
     - script:
-      name: add global meteor
+      name: apply mongo url
       code: |
-        ls -lah $WERCKER_ROOT/tools/meteor
-        if [ ! -f "$WERCKER_ROOT/tools/meteor" ]; then
-          curl https://install.meteor.com/ > $WERCKER_ROOT/tools/meteor | sh
-          chmod +x $WERCKER_ROOT/tools/meteor
+        if [[ -z "${MONGO_URL}" ]]; then
+          export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
         fi
-    - script:
-      name: add global reaction
-      code: npm install -g reaction-cli
     - script:
       name: snapshot-restore
       code: |
@@ -53,16 +59,10 @@ dev:
           echo "nothing to restore"
         fi
     - script:
-      name: apply mongo url
-      code: |
-        if [[ -z "${MONGO_URL}" ]]; then
-          export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
-        fi
-    - script:
       name: meteor dev starting, please ready yourself for a short wait (15 mins)
       code: |
         touch /var/log/reaction.log
-        meteor npm install --save bcrypt
+        # meteor npm install --save bcrypt
         node .reaction/waitForMongo.js
         reaction >> /var/log/reaction.log 2>&1 &
       cwd: $WERCKER_ROOT/src
