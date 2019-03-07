@@ -12,12 +12,13 @@ echo -e "setting up pre network"
 echo -e "============================"
 echo ""
 
+docker network create auth.reaction.localhost
 tools/hydra
 
 echo ""
 echo -e "Setting up local development"
 echo -e "============================"
-echo -e "${BGreen}Web${Color_Off}             $MACHINE_URL:80"
+echo -e "${BGreen}Web${Color_Off}             $MACHINE_URL:3000"
 echo ""
 
 export X_TERMINAL_COLUMNS=$(tput cols)

@@ -1,0 +1,2 @@
+
+mongorestore --db reaction --drop $WERCKER_ROOT/data/mongo

@@ -1,5 +1,5 @@
 if [[ -z "${WERCKER_ROOT}" ]]; then
   echo "THIS SCRIPT SHOULD ONLY BE RUN IN A DOCKER WERCKER ENVIROMENT"
 else
-  cp /private/data $WERCKER_ROOT/data
+  mongodump --db reaction --out $WERCKER_ROOT/data/mongo
 fi

@@ -36,11 +36,10 @@ dev:
     - script:
       name: add global meteor
       code: |
+        ls -lah $WERCKER_ROOT/tools/meteor
         if [ ! -f "$WERCKER_ROOT/tools/meteor" ]; then
-          curl https://install.meteor.com/ > tools/meteor | sh
+          curl https://install.meteor.com/ > $WERCKER_ROOT/tools/meteor | sh
           chmod +x $WERCKER_ROOT/tools/meteor
-        else
-          $WERCKER_ROOT/tools/meteor
         fi
     - script:
       name: add global reaction
@@ -48,8 +47,8 @@ dev:
     - script:
       name: snapshot-restore
       code: |
-        if [[ -d $WERCKER_ROOT/data ]]; then
-          cp $WERCKER_ROOT/data /private/data
+        if [[ -d $WERCKER_ROOT/data/mongo ]]; then
+          $WERCKER_ROOT/tools/snapshot-restore
         else
           echo "nothing to restore"
         fi
@@ -63,7 +62,7 @@ dev:
       name: meteor dev starting, please ready yourself for a short wait (15 mins)
       code: |
         touch /var/log/reaction.log
-        meteor npm install
+        meteor npm install --save bcrypt
         node .reaction/waitForMongo.js
         reaction >> /var/log/reaction.log 2>&1 &
       cwd: $WERCKER_ROOT/src
