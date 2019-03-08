@@ -1,6 +1,6 @@
 box:
   id: nichheadlong/reaction-wercker
-  tag: 0.0.1
+  tag: 0.0.2
   ports:
     - '3000'
     - '3030'
@@ -27,12 +27,16 @@ dev:
           ln -s "$WERCKER_ROOT/tools/reload" /usr/bin/reload
           ln -s "$WERCKER_ROOT/tools/reload" /usr/bin/restart
           ln -s "$WERCKER_ROOT/tools/snapshot" /usr/bin/snapshot
+          ln -s "$WERCKER_ROOT/tools/restore" /usr/bin/restore
     - script:
       name: set yarn cache
       code: export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
     - script:
       name: install dependencies
       code: HOME=$YARN_CACHE yarn
+    # - script:
+    #   name: start mongo shell (will need to be put into the dockerfile)
+    #   code: mongod
     # - script:
     #   name: add global meteor
     #   code: |
@@ -51,21 +55,19 @@ dev:
           export MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
         fi
     - script:
+      name: meteor dev starting, please ready yourself for a short wait (15 mins)
+      code: |
+        touch /var/log/reaction.log
+        node .reaction/waitForMongo.js
+        # reaction --production >> /var/log/reaction.log 2>&1 &
+        reaction >> /var/log/reaction.log 2>&1 &
+      cwd: $WERCKER_ROOT/src
+    - script:
       name: snapshot-restore
       code: |
         if [[ -d $WERCKER_ROOT/data/mongo ]]; then
           $WERCKER_ROOT/tools/snapshot-restore
-        else
-          echo "nothing to restore"
         fi
-    - script:
-      name: meteor dev starting, please ready yourself for a short wait (15 mins)
-      code: |
-        touch /var/log/reaction.log
-        # meteor npm install --save bcrypt
-        node .reaction/waitForMongo.js
-        reaction >> /var/log/reaction.log 2>&1 &
-      cwd: $WERCKER_ROOT/src
     - internal/shell:
       code: |
         stty columns $TERMINAL_COLUMNS
@@ -75,3 +77,5 @@ dev:
 build:
   # will need to npm install production, then do a meteor build to the env.
   # check https://guide.meteor.com/deployment.html#custom-deployment
+
+  # only use --production to spoof production in development. never for deployment

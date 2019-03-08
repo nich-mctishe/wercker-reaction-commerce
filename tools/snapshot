@@ -1,5 +1,5 @@
 if [[ -z "${WERCKER_ROOT}" ]]; then
   echo "THIS SCRIPT SHOULD ONLY BE RUN IN A DOCKER WERCKER ENVIROMENT"
 else
-  mongodump --db reaction --out $WERCKER_ROOT/data/mongo
+  mongodump --db reaction --host $MONGO_PORT_27017_TCP_ADDR --out $WERCKER_ROOT/data/mongo
 fi

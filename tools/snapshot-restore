@@ -1,2 +1,2 @@
 
-mongorestore --db reaction --drop $WERCKER_ROOT/data/mongo
+mongorestore --db reaction --host $MONGO_PORT_27017_TCP_ADDR --drop $WERCKER_ROOT/data/mongo/reaction
