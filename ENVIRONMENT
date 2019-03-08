@@ -3,3 +3,4 @@ X_HYDRA_ADMIN_URL=http://hydra:4445
 X_HYDRA_TOKEN_URL=http://hydra:4444/oauth2/token
 X_HYDRA_OAUTH2_INTROSPECT_URL=http://hydra:4445/oauth2/introspect
 X_OAUTH2_CLIENT_DOMAINS=http://localhost:4000
+X_METEOR_WATCH_POLLING_INTERVAL_MS=10000
