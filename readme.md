@@ -60,7 +60,7 @@ notes: requests are processed very slowly, may need to get upgraded package.
 start: 18:27:15
 end: 19:06:00
 startup time: 40 min.
-notes: long to start in dev mode. would have series issues passing wercker checks.
+notes: long to start in dev mode. would have serious issues passing wercker checks.
 may have to abandon wercker set up if this is true.
 
 ******************
@@ -77,10 +77,10 @@ startup time: 8.5mins
 notes: quick! (relatively) also browsing not to bad once cached.
 
 2 (with --production flag):
-start:
-end:
-startup time:
-notes:
+start: 09:53:30
+end: 10:10:00
+startup time: 17-20 mins
+notes: manageable
 
 ## Deploy to dokku
 
@@ -113,6 +113,13 @@ You should periodically update the node base image as new versions are released.
 Once you've booted your Dokku server, on the installation screen, copy and paste the public SSH key from the Wercker Project target. Then run the following steps:
 
 ```bash
+# firstly, set up hydra for auth
+apt install docker-compose
+docker network create auth.reaction.localhost
+git clone https://github.com/reactioncommerce/reaction-hydra.git .hydra
+cd .hydra
+docker-compose up -d
+
 # Set some environment variables
 export MONGO_IMAGE_VERSION="3.4.4"
 
@@ -138,13 +145,15 @@ dokku config:set reaction DEBUG="req,app,app:*"
 dokku config:set reaction DEBUG_COLORS="1"
 dokku config:set reaction COOKIE_SECRET="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c64)"
 dokku config:set reaction GOOGLE_ANALYTICS_ID="[ga_id]"
-dokku config:set reaction MONGO_URL="mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/reaction"
 dokku config:set reaction METEOR_ALLOW_SUPERUSER=true
 dokku config:set reaction HYDRA_ADMIN_URL=http://hydra:4445
 dokku config:set reaction HYDRA_TOKEN_URL=http://hydra:4444/oauth2/token
 dokku config:set reaction HYDRA_OAUTH2_INTROSPECT_URL=http://hydra:4445/oauth2/introspect
 dokku config:set reaction OAUTH2_CLIENT_DOMAINS=http://localhost:4000
 dokku config:set reaction METEOR_WATCH_POLLING_INTERVAL_MS=10000
+dokku config:set reaction REACTION_EMAIL="youradmin@yourdomain.com"
+dokku config:set reaction REACTION_USER="admin-username"
+dokku config:set reaction REACTION_AUTH="admin-password"
 
 # Setup out domains
 dokku domains:add reaction example.com

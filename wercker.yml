@@ -61,19 +61,23 @@ dev:
         log
 
 build:
-  - script:
-    name: set yarn cache
-    code: export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
-  - script:
-    name: install dependencies
-    code: HOME=$YARN_CACHE yarn
-  - npm-test:
-      name: run tests
-      cwd: $WERCKER_ROOT/src
-  # will need to npm install production, then do a meteor build to the env.
-  # check https://guide.meteor.com/deployment.html#custom-deployment
+  steps:
+    - script:
+      name: set yarn cache
+      code: export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
+    - script:
+      name: install dependencies
+      code: HOME=$YARN_CACHE yarn
+    - script:
+      name: setup metoer production
+      code: meteor npm install --production
+    - npm-test:
+        name: run tests
+        cwd: $WERCKER_ROOT/src
+# will need to npm install production, then do a meteor build to the env.
+# check https://guide.meteor.com/deployment.html#custom-deployment
 
-  # only use --production to spoof production in development. never for deployment
+# only use --production to spoof production in development. never for deployment
 
 deploy:
   steps:

@@ -9,4 +9,4 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-CMD ["reaction"]
+CMD ["reaction", "deploy"]
