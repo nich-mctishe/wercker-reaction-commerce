@@ -34,20 +34,6 @@ dev:
     - script:
       name: install dependencies
       code: HOME=$YARN_CACHE yarn
-    # - script:
-    #   name: start mongo shell (will need to be put into the dockerfile)
-    #   code: mongod
-    # - script:
-    #   name: add global meteor
-    #   code: |
-    #     ls -lah $WERCKER_ROOT/tools/meteor
-    #     if [ ! -f "$WERCKER_ROOT/tools/meteor" ]; then
-    #       curl https://install.meteor.com/ > $WERCKER_ROOT/tools/meteor | sh
-    #       chmod +x $WERCKER_ROOT/tools/meteor
-    #     fi
-    # - script:
-    #   name: add global reaction
-    #   code: npm install -g reaction-cli
     - script:
       name: apply mongo url
       code: |
@@ -75,7 +61,40 @@ dev:
         log
 
 build:
+  - script:
+    name: set yarn cache
+    code: export YARN_CACHE=$WERCKER_CACHE_DIR/yarn
+  - script:
+    name: install dependencies
+    code: HOME=$YARN_CACHE yarn
+  - npm-test:
+      name: run tests
+      cwd: $WERCKER_ROOT/src
   # will need to npm install production, then do a meteor build to the env.
   # check https://guide.meteor.com/deployment.html#custom-deployment
 
   # only use --production to spoof production in development. never for deployment
+
+deploy:
+  steps:
+    - add-to-known_hosts:
+        hostname: $DOKKU_HOST
+    - add-ssh-key:
+        keyname: DOKKU_KEY
+    - script:
+        name: Initialize new repository
+        code: |
+          rm -rf .git
+          git init
+          git config --global user.name "wercker"
+          git config --global user.email "pleasemailus@wercker.com"
+          git remote add dokku dokku@$DOKKU_HOST:$DOKKU_APP
+    - script:
+        name: Add everything to the repository
+        code: |
+          git add .
+          git commit -m "Result of deploy $WERCKER_GIT_COMMIT"
+    - script:
+        name: Push to dokku
+        code: |
+          git push -f dokku master
