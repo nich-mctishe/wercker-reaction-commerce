@@ -11,4 +11,6 @@ ENV NODE_ENV production
 
 EXPOSE 3000
 
-CMD ["reaction", "deploy"]
+# may need to do reaction deploy
+
+CMD ["reaction"]
