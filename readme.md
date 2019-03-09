@@ -1,4 +1,9 @@
 
+REACTION COMMERCE WERCKER DOKKU Setup
+
+please note this is a WIP and still has a few issues that need to be resolved.
+
+
 build status: [![wercker status](https://app.wercker.com/status/881fe9d430fdbe1b2e1f5f4091f99c37/s/master "wercker status")](https://app.wercker.com/project/byKey/881fe9d430fdbe1b2e1f5f4091f99c37)
 
 ## SYSTEM REQUIREMENTS
