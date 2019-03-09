@@ -11,7 +11,7 @@ build status: [![wercker status](https://app.wercker.com/status/881fe9d430fdbe1b
 * Clone this repo
 * cd into the root of the repo and run `tools/dev`
 
-The application should now be running on port 80. You will be attached to the running container and the log viewer will run.
+The application should now be running on port 3000. You will be attached to the running container and the log viewer will run.
 
 If you need to run adhoc commands, hit `ctrl+c` to exit the log viewer. You can return to the log viewer by simply running `log`
 
@@ -160,3 +160,5 @@ dokku domains:add reaction example.com
 dokku domains:add reaction www.example.com
 
 ```
+
+currently having issues with buildpack selection on dokku
