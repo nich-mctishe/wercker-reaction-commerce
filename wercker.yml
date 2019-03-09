@@ -45,8 +45,14 @@ dev:
       code: |
         touch /var/log/reaction.log
         node .reaction/waitForMongo.js
-        # reaction --production >> /var/log/reaction.log 2>&1 &
+        # run reacton in development (slow to start)
         reaction >> /var/log/reaction.log 2>&1 &
+
+        # spoof a production env for testing
+        # reaction --production >> /var/log/reaction.log 2>&1 &
+
+        # run reaction dev server --> this still needs some linking
+        # npm run devserver >> /var/log/reaction.log 2>&1 &
       cwd: $WERCKER_ROOT/src
     - script:
       name: snapshot-restore
@@ -71,9 +77,9 @@ build:
     - script:
       name: setup metoer production
       code: meteor npm install --production
-    - npm-test:
-        name: run tests
-        cwd: $WERCKER_ROOT/src
+    # - npm-test:
+    #     name: run tests
+    #     cwd: $WERCKER_ROOT/src
 # will need to npm install production, then do a meteor build to the env.
 # check https://guide.meteor.com/deployment.html#custom-deployment
 
