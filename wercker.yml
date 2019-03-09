@@ -77,6 +77,12 @@ build:
     - script:
       name: setup metoer production
       code: meteor npm install --production
+    - script:
+        name: export the application
+        code: |
+          cp -r src "$WERCKER_OUTPUT_DIR"
+          cp -r dokku "$WERCKER_OUTPUT_DIR"
+          mv "$WERCKER_OUTPUT_DIR/dokku/Dockerfile" "$WERCKER_OUTPUT_DIR/Dockerfile"
     # - npm-test:
     #     name: run tests
     #     cwd: $WERCKER_ROOT/src
